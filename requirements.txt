@@ -1,4 +1,9 @@
-numpy
+numpy~=2.2.6
 matplotlib
-opencv-python
+opencv-python~=4.12.0.88
 filterpy
+motmetrics~=1.4.0
+scipy~=1.16.3
+viz~=0.0.5
+tqdm~=4.67.1
+ultralytics~=8.3.246
