@@ -7,7 +7,6 @@ def draw_labels(img, labels, show_cls=True):
     out = img.copy()
 
     for lab in labels:
-        # Support both dataclass-like labels and dict outputs from tracker
         if isinstance(lab, dict):
             l, t, r, b = lab["bbox_xyxy"]
             cls = lab.get("cls", "obj")
@@ -30,7 +29,6 @@ def write_gt_video(seq_ds, out_path: str | Path, max_frames=None, fps=10, keep_c
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # read first frame to get size
     first = cv2.imread(str(seq_ds.frames[0]))
     h, w = first.shape[:2]
     writer = cv2.VideoWriter(str(out_path), cv2.VideoWriter_fourcc(*"mp4v"), fps, (w, h))

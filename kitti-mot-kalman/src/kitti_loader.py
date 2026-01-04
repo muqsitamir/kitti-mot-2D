@@ -16,11 +16,6 @@ class KittiLabel:
     score: Optional[float] = None
 
 def read_kitti_tracking_labels(label_path: Path) -> Dict[int, List[KittiLabel]]:
-    """
-    KITTI tracking label_02 format: frame, track_id, type, truncated, occluded, alpha,
-    bbox_left, bbox_top, bbox_right, bbox_bottom, ... (3D fields), [score]
-    (This matches the official KITTI tracking benchmark format.)  [oai_citation:1‡cvlibs.net](https://www.cvlibs.net/datasets/kitti/eval_tracking.php?utm_source=chatgpt.com)
-    """
     by_frame = defaultdict(list)
     if not label_path.exists():
         return {}
@@ -39,7 +34,6 @@ def read_kitti_tracking_labels(label_path: Path) -> Dict[int, List[KittiLabel]]:
             l, t, r, b = map(float, p[6:10])
 
             score = None
-            # Some result files include score as the last column; GT typically doesn’t.
             if len(p) >= 18:
                 score = float(p[17])
 
@@ -71,7 +65,7 @@ class KittiTrackingSequence:
         return len(self.frames)
 
     def frame_id(self, idx: int) -> int:
-        return int(self.frames[idx].stem)  # 000000 -> 0
+        return int(self.frames[idx].stem)
 
     def get_labels(self, frame_id: int, keep_classes=None) -> List[KittiLabel]:
         labs = self.labels_by_frame.get(frame_id, [])

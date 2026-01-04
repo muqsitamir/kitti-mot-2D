@@ -18,7 +18,7 @@ def cxcywh_to_xyxy(cx, cy, w, h):
     y1 = cy - h / 2.0
     x2 = cx + w / 2.0
     y2 = cy + h / 2.0
-    return (x1, y1, x2, y2)
+    return x1, y1, x2, y2
 
 class KalmanCV:
     def __init__(self, dt: float = 1.0):
@@ -39,8 +39,8 @@ class KalmanCV:
         self.H[3, 5] = 1.0
 
         # process + measurement noise (tunable)
-        self.Q = np.diag([1.0, 1.0, 5.0, 5.0, 1.0, 1.0]).astype(np.float32)
-        self.R = np.diag([10.0, 10.0, 25.0, 25.0]).astype(np.float32)
+        self.Q = np.diag([10.0, 10.0, 5.0, 5.0, 10.0, 10.0]).astype(np.float32)
+        self.R = np.diag([10.0, 10.0, 15.0, 15.0]).astype(np.float32)
 
     def predict(self):
         self.x = self.F @ self.x
@@ -48,7 +48,6 @@ class KalmanCV:
         return self.x
 
     def update(self, z: np.ndarray):
-        # z shape (4,1)
         y = z - (self.H @ self.x)
         S = self.H @ self.P @ self.H.T + self.R
         K = self.P @ self.H.T @ np.linalg.inv(S)
@@ -82,13 +81,12 @@ class Track:
         return cxcywh_to_xyxy(cx, cy, w, h)
 
 class SortTracker:
-    def __init__(self, iou_threshold=0.3, max_age=10, min_hits=3, output_age=0):
+    def __init__(self, iou_threshold=0.3, max_age=10, min_hits=3):
         self.iou_threshold = iou_threshold
         self.max_age = max_age
         self.min_hits = min_hits
         self.tracks: List[Track] = []
         self._next_id = 1
-        self.output_age = output_age
 
     def step(self, detections: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
@@ -100,7 +98,7 @@ class SortTracker:
             trk.predict()
 
         # 2) Build match problem (class-aware: match cars with cars, peds with peds)
-        out_tracks: List[Track] = []
+        # out_tracks: List[Track] = []
         used_det = set()
 
         # process per class separately for simplicity

@@ -10,7 +10,7 @@ if str(_SRC) not in sys.path:
 from kitti_loader import KittiTrackingSequence
 from tracker import SortTracker
 from metrics import eval_mot
-from run_tracker_seq import make_detections
+from run_tracker_seq import make_detections_from_gt
 
 def main():
     ap = argparse.ArgumentParser()
@@ -26,7 +26,7 @@ def main():
     args = ap.parse_args()
 
     ds = KittiTrackingSequence(args.root, "training", args.seq)
-    keep = {"Car", "Pedestrian"}
+    keep = {"Car", "Pedestrian", "Van", "Cyclist"}
 
     tracker = SortTracker(
         iou_threshold=args.iou_assoc_thresh,
@@ -46,7 +46,7 @@ def main():
         gt_frame = [{"track_id": l.track_id, "bbox_xyxy": l.bbox_xyxy, "cls": l.cls} for l in gt_labels]
 
         # detections (no GT IDs)
-        dets = make_detections(gt_labels, drop=args.drop, jitter=args.jitter, seed=1234 + i)
+        dets = make_detections_from_gt(gt_labels, drop=args.drop, jitter=args.jitter, seed=123 + i)
 
         pr_tracks = tracker.step(dets)
         pr_frame = [{"track_id": t["track_id"], "bbox_xyxy": t["bbox_xyxy"], "cls": t["cls"]} for t in pr_tracks]
@@ -54,7 +54,6 @@ def main():
         frames_gt.append(gt_frame)
         frames_pr.append(pr_frame)
 
-    # evaluate overall (cars+peds together)
     summary = eval_mot(frames_gt, frames_pr, iou_match_thresh=args.iou_match_thresh)
     print(f"\nSequence {args.seq} | drop={args.drop} jitter={args.jitter} "
           f"| assoc_iou>={args.iou_assoc_thresh} match_iou>={args.iou_match_thresh}\n")

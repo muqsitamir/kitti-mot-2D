@@ -45,7 +45,6 @@ def main():
     ap.add_argument("--iou_assoc_thresh", type=float, default=0.2)
     ap.add_argument("--max_age", type=int, default=30)
     ap.add_argument("--min_hits", type=int, default=2)
-    ap.add_argument("--output_age", type=int, default=2)
 
     args = ap.parse_args()
 
@@ -60,7 +59,6 @@ def main():
         iou_threshold=args.iou_assoc_thresh,
         max_age=args.max_age,
         min_hits=args.min_hits,
-        output_age=args.output_age,
     )
 
     frames_gt, frames_pr = [], []

@@ -25,6 +25,7 @@ def main():
 
     ds = KittiTrackingSequence(args.root, args.split, args.seq)
     keep = {"Car", "Pedestrian"} if args.cars_peds_only else None
+    keep = {"Car", "Pedestrian", "Van", "Cyclist"}
 
     out_path = write_gt_video(ds, args.out, max_frames=args.max_frames, fps=args.fps, keep_classes=keep)
     print(f"Wrote: {out_path}")
