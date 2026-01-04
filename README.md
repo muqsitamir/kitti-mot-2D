@@ -23,3 +23,8 @@ python kitti-mot-kalman/scripts/cache_yolo_dets.py --seq 0000 --split training -
 ```
 PYTHONPATH=kitti-mot-kalman/src python kitti-mot-kalman/scripts/eval_seq.py --seq 0000 --drop 0 --jitter 0 --max_frames 300 --min_hits 1
 ```
+
+```
+PYTHONPATH=kitti-mot-kalman/src python kitti-mot-kalman/scripts/eval_yolo_tracker_seq.py \
+  --seq 0003 --max_frames 300
+```
